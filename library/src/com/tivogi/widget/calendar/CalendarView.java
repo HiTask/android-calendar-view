@@ -53,6 +53,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 	private TextView[] mWeekHeaderTextViews;
 	private OnDateClickLisetener mOnDateClickListener;
 	private ViewSwitcher mViewSwitcher;
+	private boolean mSelectable = true;
 	private OnSwipeTouchListener mOnSwipeTouchListener = new OnSwipeTouchListener(getContext()) {
 		@Override
 		public void onSwipeLeft() {
@@ -85,8 +86,6 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		}
 	}
 
-	protected abstract T createDaysGridView();
-
 	private void bindViews() {
 		mViewSwitcher = (ViewSwitcher) findViewById(R.id.vc_switcher);
 		for (int i = 0; i < 2; i++) {
@@ -99,6 +98,8 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		mTitleView = (TextView) findViewById(R.id.vc_button_pick_date);
 		mWeekHeaderLinearLayout = (LinearLayout) findViewById(R.id.vc_week_header);
 	}
+
+	protected abstract T createDaysGridView();
 
 	private TextView createWeekHeaderTextView() {
 		TextView result = new TextView(getContext());
@@ -120,6 +121,10 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		return mOnDateClickListener;
 	}
 
+	public DateTime getSelectedDate() {
+		return mSelectedDate;
+	}
+
 	private void initialize(Context context) {
 		View.inflate(context, R.layout.view_calendar, this);
 		bindViews();
@@ -127,10 +132,6 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		initializeButtonsListeners();
 		mDateTime = DateTime.today(TimeZone.getDefault());
 		setDate(mDateTime);
-	}
-
-	public DateTime getSelectedDate() {
-		return mSelectedDate;
 	}
 
 	private void initializeButtonsListeners() {
@@ -154,6 +155,10 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		}
 	}
 
+	public boolean isSelectable() {
+		return mSelectable;
+	}
+
 	boolean onDateClick(DateTime date) {
 		// TODO what returns boolean why?
 		if (getOnDateClickListener() != null) if (getOnDateClickListener().onDateClick(date)) return true;
@@ -166,6 +171,11 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		selectDate(DateTime.forDateOnly(year, monthOfYear + 1, dayOfMonth));
 	}
 
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		return mOnSwipeTouchListener.onTouch(this, ev);
+	}
+
 	private void prepareAnimation(DateTime dateTime) {
 		if (dateTime.lt(mDateTime)) {
 			mViewSwitcher.setInAnimation(getContext(), R.anim.slide_in_left);
@@ -176,14 +186,14 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		}
 	}
 
-	private void setButtonOnClickListener(int resId) {
-		View view = (View) findViewById(resId);
-		view.setOnClickListener(mOnClickListener);
-	}
-
 	public void selectDate(DateTime date) {
 		mSelectedDate = date;
 		setDate(date);
+	}
+
+	private void setButtonOnClickListener(int resId) {
+		View view = (View) findViewById(resId);
+		view.setOnClickListener(mOnClickListener);
 	}
 
 	public void setDate(DateTime dateTime) {
@@ -203,13 +213,12 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		updateWeekHeader();
 	}
 
-	@Override
-	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		return mOnSwipeTouchListener.onTouch(this, ev);
-	}
-
 	public void setOnDateClickListener(OnDateClickLisetener onDateClickListener) {
 		mOnDateClickListener = onDateClickListener;
+	}
+
+	public void setSelectable(boolean selectable) {
+		mSelectable = selectable;
 	}
 
 	private void updateWeekHeader() {

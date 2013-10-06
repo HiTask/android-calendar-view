@@ -6,15 +6,16 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-
-import com.tivogi.helper.UiHelper;
 
 public class DaysGridView extends View {
 	public class DayCell {
@@ -35,13 +36,23 @@ public class DaysGridView extends View {
 			mBound = new RectF();
 			mTodayRect = new RectF();
 			mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
-			mTextPaint.setTextSize(UiHelper.convertSpToPx(16));
+			mTextPaint.setTextSize(convertSpToPx(16));
 			mPaint = new Paint();
+			mPaint.setStyle(Style.FILL);
 		}
 
 		private void calculateTextOrigin() {
 			mTextOrigin.x = mBound.centerX() - mTextPaint.measureText(mDayOfMonth) / 2;
 			mTextOrigin.y = mBound.centerY() + mTextPaint.getTextSize() / 2;
+		}
+
+		protected void draw(Canvas canvas) {
+			drawBackground(canvas);
+			if (isToday()) {
+				canvas.drawRect(mTodayRect, sTodayPaint);
+			}
+			drawDateText(canvas);
+			if (isSelected()) drawSelected(canvas);
 		}
 
 		protected void drawBackground(Canvas canvas) {
@@ -89,15 +100,6 @@ public class DaysGridView extends View {
 
 		protected void onClick() {
 			onDayCellClick(this);
-		}
-
-		protected void onDraw(Canvas canvas) {
-			drawBackground(canvas);
-			if (isToday()) {
-				canvas.drawRect(mTodayRect, sTodayPaint);
-			}
-			drawDateText(canvas);
-			if (isSelected()) drawSelected(canvas);
 		}
 
 		public boolean onTouchEvent(MotionEvent event) {
@@ -150,7 +152,7 @@ public class DaysGridView extends View {
 		}
 
 		public void setSelected(boolean selected) {
-			mSelected = selected;
+			if (getCalendarView().isSelectable()) mSelected = selected;
 		}
 	}
 
@@ -158,38 +160,48 @@ public class DaysGridView extends View {
 		protected static final int DAYS_COUNT = 7;
 		protected DayCell[] mDays = new DayCell[DAYS_COUNT];
 
-		protected void onDraw(Canvas canvas) {
+		protected void draw(Canvas canvas) {
 			for (DayCell day : mDays) {
-				day.onDraw(canvas);
+				day.draw(canvas);
 			}
+		}
+
+		public DayCell[] getDays() {
+			return mDays;
 		}
 	}
 
-	private int mActiveMonth;
 	protected static final int DEFAULT_TODAY_COLOR = Color.parseColor("#90F00000");
-	protected static final int DEFAULT_BACKGROUND_COLOR = Color.WHITE;
 	protected static final int DEFAULT_SELECTED_COLOR = Color.parseColor("#33000000");
+	private static final int WEEKS_COUNT = 6;
 
+	public static float convertDpToPx(float dpValue) {
+		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, Resources.getSystem().getDisplayMetrics());
+	}
+
+	public static float convertSpToPx(float spValue) {
+		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spValue, Resources.getSystem().getDisplayMetrics());
+	}
+
+	private int mActiveMonth;
+	protected static final int DEFAULT_BACKGROUND_COLOR = Color.WHITE;
 	private static Paint sTodayPaint;
+	private static final int DEFAULT_GRID_LINE_WIDTH = 1; // size in pixels
+
 	static {
 		sTodayPaint = new Paint();
 		sTodayPaint.setStyle(Paint.Style.STROKE);
 		sTodayPaint.setColor(DEFAULT_TODAY_COLOR);
-		sTodayPaint.setStrokeWidth(UiHelper.convertDpToPx(3));
+		sTodayPaint.setStrokeWidth(convertDpToPx(3));
 	}
-
-	private static final float DEFAULT_GRID_LINE_WIDTH = 1f;
-	private static final int WEEKS_COUNT = 6;
 
 	public static int getWeekHeaderColumnCount() {
 		return WeekRow.DAYS_COUNT;
 	}
 
 	private DayCell mSeletectedDay;
-
-	protected WeekRow[] mWeeks = new WeekRow[WEEKS_COUNT];
-
-	private float mGridLineWidth;
+	private WeekRow[] mWeeks = new WeekRow[WEEKS_COUNT];
+	private int mGridLineWidth;
 
 	private CalendarView<?> mCalendarView;
 
@@ -200,6 +212,10 @@ public class DaysGridView extends View {
 
 	protected DayCell createEmptyDayCell() {
 		return new DayCell();
+	}
+
+	protected CalendarView<?> getCalendarView() {
+		return mCalendarView;
 	}
 
 	private int getIndexForDayOfWeek(DateTime dateTime) {
@@ -234,6 +250,10 @@ public class DaysGridView extends View {
 		return mWeeks[0].mDays[index].getDateTime().format("WWW", Locale.getDefault());
 	}
 
+	public WeekRow[] getWeeks() {
+		return mWeeks;
+	}
+
 	private void initialize() {
 		mGridLineWidth = DEFAULT_GRID_LINE_WIDTH;
 		for (int i = 0; i < WEEKS_COUNT; i++) {
@@ -245,6 +265,7 @@ public class DaysGridView extends View {
 	}
 
 	protected void onDayCellClick(DayCell dayCell) {
+		if (!getCalendarView().isSelectable()) return;
 		if (!dayCell.isFromActiveMonth()) {
 			mCalendarView.selectDate(dayCell.getDateTime());
 			return;
@@ -257,26 +278,29 @@ public class DaysGridView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		for (WeekRow week : mWeeks) {
-			week.onDraw(canvas);
+			week.draw(canvas);
 		}
 	}
 
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-		float cellWidth = ((float) w - mGridLineWidth * (WeekRow.DAYS_COUNT - 1)) / WeekRow.DAYS_COUNT;
-		float cellHeight = ((float) h - mGridLineWidth * (WEEKS_COUNT - 1)) / WEEKS_COUNT;
+		int cellWidth = (int) (w - mGridLineWidth * (WeekRow.DAYS_COUNT - 1)) / WeekRow.DAYS_COUNT;
+		int cellHeight = (int) (h - mGridLineWidth * (WEEKS_COUNT - 1)) / WEEKS_COUNT;
 		RectF cellBound = new RectF(0, 0, 0, 0);
-		// x and y are integer type, then use them after float at multiply
-		// operation to get float result or convert to float
+		float currentLeft = 0, currentTop = 0;
 		for (int y = 0; y < WEEKS_COUNT; y++) {
+			currentLeft = 0;
 			for (int x = 0; x < WeekRow.DAYS_COUNT; x++) {
-				cellBound.left = cellWidth * x + mGridLineWidth * x;
-				cellBound.right = cellBound.left + cellWidth;
-				cellBound.top = cellHeight * y + mGridLineWidth * y;
-				cellBound.bottom = cellBound.top + cellHeight;
+				cellBound.left = currentLeft;
+				cellBound.right = currentLeft + cellWidth;
+				cellBound.top = currentTop;
+				cellBound.bottom = currentTop + cellHeight;
 				mWeeks[y].mDays[x].setBound(cellBound);
+				currentLeft += cellWidth + mGridLineWidth;
 			}
+			currentTop += cellHeight + mGridLineWidth;
 		}
+
 		super.onSizeChanged(w, h, oldw, oldh);
 	}
 
@@ -318,10 +342,10 @@ public class DaysGridView extends View {
 				dateTime = dateTime.plusDays(1);
 			}
 		}
-		updateDaysCellData();
+		updateDaysCells();
 	}
 
-	protected void updateDaysCellData() {
+	public void updateDaysCells() {
 		invalidate();
 	}
 }
