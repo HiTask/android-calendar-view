@@ -223,4 +223,8 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 			mWeekHeaderTextViews[i].setText(mCurrentDaysGridView.getWeekHeaderColumnTitle(i));
 		}
 	}
+
+	public void updateCells() {
+		getCurrentDaysGridView().updateDaysCells();
+	}
 }
