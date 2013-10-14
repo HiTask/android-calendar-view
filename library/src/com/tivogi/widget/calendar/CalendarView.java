@@ -23,6 +23,7 @@ import android.widget.ViewSwitcher;
 import com.tivogi.calendar_view.R;
 
 public abstract class CalendarView<T extends DaysGridView> extends FrameLayout implements OnDateSetListener {
+
 	private final class OnClickListenerImplementation implements OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -168,7 +169,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 	@Override
 	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		/* +1 because The month that was set (0-11) for compatibility with Calendar. */
-		selectDate(DateTime.forDateOnly(year, monthOfYear + 1, dayOfMonth));
+		setDate(DateTime.forDateOnly(year, monthOfYear + 1, dayOfMonth));
 	}
 
 	@Override
@@ -186,17 +187,13 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		}
 	}
 
-	public void selectDate(DateTime date) {
-		mSelectedDate = date;
-		setDate(date);
-	}
-
 	private void setButtonOnClickListener(int resId) {
 		View view = (View) findViewById(resId);
 		view.setOnClickListener(mOnClickListener);
 	}
 
 	public void setDate(DateTime dateTime) {
+		if (isSelectable()) mSelectedDate = dateTime;
 		boolean showAnimation = false;
 		if (mDateTime.getMonth().intValue() != dateTime.getMonth().intValue() || mDateTime.getYear().intValue() != dateTime.getYear().intValue()) {
 			prepareAnimation(dateTime);

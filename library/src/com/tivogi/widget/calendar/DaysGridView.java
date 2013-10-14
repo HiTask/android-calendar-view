@@ -267,7 +267,7 @@ public class DaysGridView extends View {
 	protected void onDayCellClick(DayCell dayCell) {
 		if (!getCalendarView().isSelectable()) return;
 		if (!dayCell.isFromActiveMonth()) {
-			mCalendarView.selectDate(dayCell.getDateTime());
+			mCalendarView.setDate(dayCell.getDateTime());
 			return;
 		}
 		selectDayCell(dayCell);
@@ -322,7 +322,7 @@ public class DaysGridView extends View {
 		if (mSeletectedDay != null) mSeletectedDay.setSelected(false);
 		mSeletectedDay = dayCell;
 		mSeletectedDay.setSelected(true);
-		mCalendarView.selectDate(dayCell.getDateTime());
+		mCalendarView.setDate(dayCell.getDateTime());
 	}
 
 	public void setCalendarView(CalendarView<?> calendarView) {
