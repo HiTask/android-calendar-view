@@ -56,7 +56,7 @@ public class DaysGridView extends View {
 		}
 
 		protected void drawBackground(Canvas canvas) {
-			mPaint.setColor(DEFAULT_BACKGROUND_COLOR);
+			mPaint.setColor(isFromActiveMonth() ? DEFAULT_BACKGROUND_ACTIVE_COLOR : DEFAULT_BACKGROUND_INACTIVE_COLOR);
 			canvas.drawRect(mBound, mPaint);
 		}
 
@@ -184,7 +184,8 @@ public class DaysGridView extends View {
 	}
 
 	private int mActiveMonth;
-	protected static final int DEFAULT_BACKGROUND_COLOR = Color.WHITE;
+	protected static final int DEFAULT_BACKGROUND_ACTIVE_COLOR = Color.WHITE;
+	protected static final int DEFAULT_BACKGROUND_INACTIVE_COLOR = Color.parseColor("#ffeeeeee");
 	private static Paint sTodayPaint;
 	private static final int DEFAULT_GRID_LINE_WIDTH = 1; // size in pixels
 
