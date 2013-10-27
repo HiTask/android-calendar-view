@@ -191,11 +191,15 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		View view = (View) findViewById(resId);
 		view.setOnClickListener(mOnClickListener);
 	}
-
+	
 	public void setDate(DateTime dateTime) {
+		setDate(dateTime, true);
+	}
+
+	public void setDate(DateTime dateTime, boolean animation) {
 		if (isSelectable()) mSelectedDate = dateTime;
 		boolean showAnimation = false;
-		if (mDateTime.getMonth().intValue() != dateTime.getMonth().intValue() || mDateTime.getYear().intValue() != dateTime.getYear().intValue()) {
+		if (animation && mDateTime.getMonth().intValue() != dateTime.getMonth().intValue() || mDateTime.getYear().intValue() != dateTime.getYear().intValue()) {
 			prepareAnimation(dateTime);
 			mCurrentDaysGridView = (DaysGridView) mViewSwitcher.getNextView();
 			showAnimation = true;
@@ -218,13 +222,13 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		mSelectable = selectable;
 	}
 
+	public void updateCells() {
+		getCurrentDaysGridView().updateDaysCells();
+	}
+
 	private void updateWeekHeader() {
 		for (int i = 0; i < mWeekHeaderTextViews.length; i++) {
 			mWeekHeaderTextViews[i].setText(mCurrentDaysGridView.getWeekHeaderColumnTitle(i));
 		}
-	}
-
-	public void updateCells() {
-		getCurrentDaysGridView().updateDaysCells();
 	}
 }
