@@ -71,11 +71,30 @@
             android:minHeight="25dp"
             android:orientation="horizontal" />
 
-        <ViewSwitcher
-            android:id="@+id/vc_switcher"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
-        </ViewSwitcher>
+
+            <ViewSwitcher
+                android:id="@+id/vc_switcher"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+            </ViewSwitcher>
+
+            <FrameLayout
+                android:id="@+id/vc_progress_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#AAFFFFFF" >
+
+                <ProgressBar
+                    android:id="@+id/vc_progress"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+        </FrameLayout>
     </LinearLayout>
 
 </merge>

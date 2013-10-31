@@ -2,6 +2,7 @@ package com.tivogi.widget.calendar;
 
 import hirondelle.date4j.DateTime;
 
+import java.lang.ref.WeakReference;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -13,6 +14,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -156,6 +158,43 @@ public class DaysGridView extends View {
 		}
 	}
 
+	private static class UpdateDaysCellsTask extends AsyncTask<Void, Void, Void> {
+
+		private WeakReference<DaysGridView> mWeakReference;
+
+		public UpdateDaysCellsTask(DaysGridView view) {
+			mWeakReference = new WeakReference<DaysGridView>(view);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			DaysGridView daysGridView = mWeakReference.get();
+			if (daysGridView != null) {
+				daysGridView.getCalendarView().setProgressVisible(true);
+			}
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			DaysGridView daysGridView = mWeakReference.get();
+			if (daysGridView != null) {
+				daysGridView.updateDaysCellsImpl();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			DaysGridView daysGridView = mWeakReference.get();
+			if (daysGridView != null) {
+				daysGridView.invalidate();
+				daysGridView.getCalendarView().setProgressVisible(false);
+			}
+		}
+	}
+
 	protected static class WeekRow {
 		protected static final int DAYS_COUNT = 7;
 		protected DayCell[] mDays = new DayCell[DAYS_COUNT];
@@ -173,6 +212,7 @@ public class DaysGridView extends View {
 
 	protected static final int DEFAULT_TODAY_COLOR = Color.parseColor("#90F00000");
 	protected static final int DEFAULT_SELECTED_COLOR = Color.parseColor("#33000000");
+
 	private static final int WEEKS_COUNT = 6;
 
 	public static float convertDpToPx(float dpValue) {
@@ -187,6 +227,7 @@ public class DaysGridView extends View {
 	protected static final int DEFAULT_BACKGROUND_ACTIVE_COLOR = Color.WHITE;
 	protected static final int DEFAULT_BACKGROUND_INACTIVE_COLOR = Color.parseColor("#ffeeeeee");
 	private static Paint sTodayPaint;
+
 	private static final int DEFAULT_GRID_LINE_WIDTH = 1; // size in pixels
 
 	static {
@@ -202,6 +243,7 @@ public class DaysGridView extends View {
 
 	private DayCell mSeletectedDay;
 	private WeekRow[] mWeeks = new WeekRow[WEEKS_COUNT];
+
 	private int mGridLineWidth;
 
 	private CalendarView<?> mCalendarView;
@@ -346,7 +388,10 @@ public class DaysGridView extends View {
 		updateDaysCells();
 	}
 
-	public void updateDaysCells() {
-		invalidate();
+	public final void updateDaysCells() {
+		new UpdateDaysCellsTask(this).execute();
+	}
+
+	protected void updateDaysCellsImpl() {
 	}
 }

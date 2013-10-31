@@ -53,7 +53,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 	private LinearLayout mWeekHeaderLinearLayout;
 	private TextView[] mWeekHeaderTextViews;
 	private OnDateClickLisetener mOnDateClickListener;
-	private ViewSwitcher mViewSwitcher;
+	private ViewSwitcher mSwitcherView;
 	private boolean mSelectable = true;
 	private OnSwipeTouchListener mOnSwipeTouchListener = new OnSwipeTouchListener(getContext()) {
 		@Override
@@ -67,7 +67,9 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		};
 	};
 	private DateTime mDateTime;
-	private DateTime mSelectedDate;;
+	private DateTime mSelectedDate;
+
+	private View mProgressView;;
 
 	public CalendarView(Context context) {
 		super(context);
@@ -88,14 +90,15 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 	}
 
 	private void bindViews() {
-		mViewSwitcher = (ViewSwitcher) findViewById(R.id.vc_switcher);
+		mSwitcherView = (ViewSwitcher) findViewById(R.id.vc_switcher);
+		mProgressView = findViewById(R.id.vc_progress_wrapper);
 		for (int i = 0; i < 2; i++) {
 			T daysGridView = createDaysGridView();
 			daysGridView.setBackgroundColor(getResources().getColor(R.color.days_grid_background));
 			daysGridView.setCalendarView(this);
-			mViewSwitcher.addView(daysGridView);
+			mSwitcherView.addView(daysGridView);
 		}
-		mCurrentDaysGridView = (DaysGridView) mViewSwitcher.getCurrentView();
+		mCurrentDaysGridView = (DaysGridView) mSwitcherView.getCurrentView();
 		mTitleView = (TextView) findViewById(R.id.vc_button_pick_date);
 		mWeekHeaderLinearLayout = (LinearLayout) findViewById(R.id.vc_week_header);
 	}
@@ -179,11 +182,11 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 
 	private void prepareAnimation(DateTime dateTime) {
 		if (dateTime.lt(mDateTime)) {
-			mViewSwitcher.setInAnimation(getContext(), R.anim.slide_in_left);
-			mViewSwitcher.setOutAnimation(getContext(), R.anim.slide_out_right);
+			mSwitcherView.setInAnimation(getContext(), R.anim.slide_in_left);
+			mSwitcherView.setOutAnimation(getContext(), R.anim.slide_out_right);
 		} else {
-			mViewSwitcher.setOutAnimation(getContext(), R.anim.slide_out_left);
-			mViewSwitcher.setInAnimation(getContext(), R.anim.slide_in_right);
+			mSwitcherView.setOutAnimation(getContext(), R.anim.slide_out_left);
+			mSwitcherView.setInAnimation(getContext(), R.anim.slide_in_right);
 		}
 	}
 
@@ -191,7 +194,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		View view = (View) findViewById(resId);
 		view.setOnClickListener(mOnClickListener);
 	}
-	
+
 	public void setDate(DateTime dateTime) {
 		setDate(dateTime, true);
 	}
@@ -201,7 +204,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		boolean showAnimation = false;
 		if (animation && mDateTime.getMonth().intValue() != dateTime.getMonth().intValue() || mDateTime.getYear().intValue() != dateTime.getYear().intValue()) {
 			prepareAnimation(dateTime);
-			mCurrentDaysGridView = (DaysGridView) mViewSwitcher.getNextView();
+			mCurrentDaysGridView = (DaysGridView) mSwitcherView.getNextView();
 			showAnimation = true;
 		}
 		String title = dateTime.format("MMMM YYYY", Locale.getDefault()).toUpperCase(Locale.getDefault());
@@ -209,13 +212,21 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		mDateTime = dateTime;
 		mCurrentDaysGridView.setDate(dateTime);
 		if (showAnimation) {
-			mViewSwitcher.showNext();
+			mSwitcherView.showNext();
 		}
 		updateWeekHeader();
 	}
 
 	public void setOnDateClickListener(OnDateClickLisetener onDateClickListener) {
 		mOnDateClickListener = onDateClickListener;
+	}
+
+	public void setProgressVisible(boolean visible) {
+		if (visible) {
+			mProgressView.setVisibility(View.VISIBLE);
+		} else {
+			mProgressView.setVisibility(View.GONE);
+		}
 	}
 
 	public void setSelectable(boolean selectable) {
@@ -231,4 +242,5 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 			mWeekHeaderTextViews[i].setText(mCurrentDaysGridView.getWeekHeaderColumnTitle(i));
 		}
 	}
+
 }
