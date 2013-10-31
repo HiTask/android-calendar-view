@@ -44,7 +44,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 	}
 
 	public interface OnDateClickLisetener {
-		boolean onDateClick(DateTime date);
+		public void onDateClick(DateTime date);
 	}
 
 	private TextView mTitleView;
@@ -135,7 +135,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		initizlizeWeekHeader();
 		initializeButtonsListeners();
 		mDateTime = DateTime.today(TimeZone.getDefault());
-		setDate(mDateTime);
+		setDate(mDateTime, false);
 	}
 
 	private void initializeButtonsListeners() {
@@ -163,10 +163,11 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		return mSelectable;
 	}
 
-	boolean onDateClick(DateTime date) {
-		// TODO what returns boolean why?
-		if (getOnDateClickListener() != null) if (getOnDateClickListener().onDateClick(date)) return true;
-		return false;
+	public void onDateClick(DateTime date) {
+		setSelectedDate(date);
+		mDateTime = date;
+		if (getOnDateClickListener() == null) return;
+		getOnDateClickListener().onDateClick(date);
 	}
 
 	@Override
@@ -200,9 +201,9 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 	}
 
 	public void setDate(DateTime dateTime, boolean animation) {
-		if (isSelectable()) mSelectedDate = dateTime;
+		setSelectedDate(dateTime);
 		boolean showAnimation = false;
-		if (animation && mDateTime.getMonth().intValue() != dateTime.getMonth().intValue() || mDateTime.getYear().intValue() != dateTime.getYear().intValue()) {
+		if (animation && (mDateTime.getMonth().intValue() != dateTime.getMonth().intValue() || mDateTime.getYear().intValue() != dateTime.getYear().intValue())) {
 			prepareAnimation(dateTime);
 			mCurrentDaysGridView = (DaysGridView) mSwitcherView.getNextView();
 			showAnimation = true;
@@ -231,6 +232,10 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 
 	public void setSelectable(boolean selectable) {
 		mSelectable = selectable;
+	}
+
+	protected void setSelectedDate(DateTime dateTime) {
+		if (isSelectable()) mSelectedDate = dateTime;
 	}
 
 	public void updateCells() {

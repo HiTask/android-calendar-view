@@ -241,7 +241,6 @@ public class DaysGridView extends View {
 		return WeekRow.DAYS_COUNT;
 	}
 
-	private DayCell mSeletectedDay;
 	private WeekRow[] mWeeks = new WeekRow[WEEKS_COUNT];
 
 	private int mGridLineWidth;
@@ -313,7 +312,13 @@ public class DaysGridView extends View {
 			mCalendarView.setDate(dayCell.getDateTime());
 			return;
 		}
-		selectDayCell(dayCell);
+		for (WeekRow week : mWeeks) {
+			for (DayCell day : week.mDays) {
+				day.setSelected(false);
+			}
+		}
+		dayCell.setSelected(true);
+		invalidate();
 		mCalendarView.onDateClick(dayCell.getDateTime());
 	}
 
@@ -352,20 +357,11 @@ public class DaysGridView extends View {
 		for (WeekRow week : mWeeks) {
 			for (DayCell day : week.mDays) {
 				if (day.onTouchEvent(event)) {
-					invalidate();
 					return true;
 				}
 			}
 		}
 		return super.onTouchEvent(event);
-	}
-
-	public void selectDayCell(DayCell dayCell) {
-		if (mSeletectedDay == dayCell) return;
-		if (mSeletectedDay != null) mSeletectedDay.setSelected(false);
-		mSeletectedDay = dayCell;
-		mSeletectedDay.setSelected(true);
-		mCalendarView.setDate(dayCell.getDateTime());
 	}
 
 	public void setCalendarView(CalendarView<?> calendarView) {
