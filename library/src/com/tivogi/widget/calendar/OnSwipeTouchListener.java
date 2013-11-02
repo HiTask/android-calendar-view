@@ -21,21 +21,17 @@ public class OnSwipeTouchListener implements OnTouchListener {
 			if (Math.abs(diffX) > Math.abs(diffY)) {
 				if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
 					if (diffX > 0) {
-						onSwipeRight();
-						return true;
+						return onSwipeRight();
 					} else {
-						onSwipeLeft();
-						return true;
+						return onSwipeLeft();
 					}
 				}
 			} else {
 				if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
 					if (diffY > 0) {
-						onSwipeBottom();
-						return true;
+						return onSwipeBottom();
 					} else {
-						onSwipeTop();
-						return true;
+						return onSwipeTop();
 					}
 				}
 			}
@@ -49,16 +45,20 @@ public class OnSwipeTouchListener implements OnTouchListener {
 		mGestureDetector = new GestureDetector(context, new GestureListener());
 	}
 
-	public void onSwipeBottom() {
+	public boolean onSwipeBottom() {
+		return false;
 	}
 
-	public void onSwipeLeft() {
+	public boolean onSwipeLeft() {
+		return false;
 	}
 
-	public void onSwipeRight() {
+	public boolean onSwipeRight() {
+		return false;
 	}
 
-	public void onSwipeTop() {
+	public boolean onSwipeTop() {
+		return false;
 	}
 
 	public boolean onTouch(final View view, final MotionEvent motionEvent) {

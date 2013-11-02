@@ -57,13 +57,15 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 	private boolean mSelectable = true;
 	private OnSwipeTouchListener mOnSwipeTouchListener = new OnSwipeTouchListener(getContext()) {
 		@Override
-		public void onSwipeLeft() {
+		public boolean onSwipeLeft() {
 			addMonth(1);
+			return true;
 		}
 
 		@Override
-		public void onSwipeRight() {
+		public boolean onSwipeRight() {
 			addMonth(-1);
+			return true;
 		};
 	};
 	private DateTime mDateTime;
