@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">calendar-view</string>
+    
+    <string name="desc_next_month">Next month</string>
+    <string name="desc_next_year">Next year</string>
+    <string name="desc_previous_month">Previous month</string>
+    <string name="desc_previous_year">Previous year</string>
+
+</resources>
