@@ -1,0 +1,14 @@
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.library'
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.darwinsys:hirondelle-date4j:1.5.1'
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.1.0"
+}

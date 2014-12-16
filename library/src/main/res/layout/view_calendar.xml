@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/month_header_background"
+            android:orientation="horizontal"
+            android:padding="4dp" >
+
+            <com.tivogi.widget.tinted.TintImageView
+                android:id="@+id/vc_button_previous_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/desc_previous_year"
+                android:src="@drawable/calendar_previos_year" />
+
+            <com.tivogi.widget.tinted.TintImageView
+                android:id="@+id/vc_button_previous_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/desc_previous_year"
+                android:src="@drawable/calendar_previos_month" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1" >
+
+                <TextView
+                    android:id="@+id/vc_button_pick_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+            </FrameLayout>
+
+            <com.tivogi.widget.tinted.TintImageView
+                android:id="@+id/vc_button_next_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/desc_previous_year"
+                android:src="@drawable/calendar_next_month" />
+
+            <com.tivogi.widget.tinted.TintImageView
+                android:id="@+id/vc_button_next_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/desc_previous_year"
+                android:src="@drawable/calendar_next_year" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/vc_week_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/week_header_background"
+            android:minHeight="25dp"
+            android:orientation="horizontal" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ViewSwitcher
+                android:id="@+id/vc_switcher"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+            </ViewSwitcher>
+
+            <FrameLayout
+                android:id="@+id/vc_progress_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#AAFFFFFF" >
+
+                <ProgressBar
+                    android:id="@+id/vc_progress"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+</merge>
