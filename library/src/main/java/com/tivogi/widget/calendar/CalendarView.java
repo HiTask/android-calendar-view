@@ -38,13 +38,12 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 				addMonth(-12);
 			} else if (id == R.id.vc_button_pick_date) {
 				new DatePickerDialog(getContext(), CalendarView.this, mDateTime.getYear(), mDateTime.getMonth() - 1, mDateTime.getDay()).show();
-			} else {
 			}
 		}
 	}
 
-	public interface OnDateClickLisetener {
-		public void onDateClick(DateTime date);
+	public interface OnDateClickListener {
+		void onDateClick(DateTime date);
 	}
 
 	private TextView mTitleView;
@@ -52,7 +51,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 	private OnClickListener mOnClickListener;
 	private LinearLayout mWeekHeaderLinearLayout;
 	private TextView[] mWeekHeaderTextViews;
-	private OnDateClickLisetener mOnDateClickListener;
+	private OnDateClickListener mOnDateClickListener;
 	private ViewSwitcher mSwitcherView;
 	private boolean mSelectable = true;
 	private OnSwipeTouchListener mOnSwipeTouchListener = new OnSwipeTouchListener(getContext()) {
@@ -66,12 +65,12 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		public boolean onSwipeRight() {
 			addMonth(-1);
 			return true;
-		};
+		}
 	};
 	private DateTime mDateTime;
 	private DateTime mSelectedDate;
 
-	private View mProgressView;;
+	private View mProgressView;
 
 	public CalendarView(Context context) {
 		super(context);
@@ -123,7 +122,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		return mDateTime;
 	}
 
-	public OnDateClickLisetener getOnDateClickListener() {
+	public OnDateClickListener getOnDateClickListener() {
 		return mOnDateClickListener;
 	}
 
@@ -194,7 +193,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 	}
 
 	private void setButtonOnClickListener(int resId) {
-		View view = (View) findViewById(resId);
+		View view = findViewById(resId);
 		view.setOnClickListener(mOnClickListener);
 	}
 
@@ -220,7 +219,7 @@ public abstract class CalendarView<T extends DaysGridView> extends FrameLayout i
 		updateWeekHeader();
 	}
 
-	public void setOnDateClickListener(OnDateClickLisetener onDateClickListener) {
+	public void setOnDateClickListener(OnDateClickListener onDateClickListener) {
 		mOnDateClickListener = onDateClickListener;
 	}
 

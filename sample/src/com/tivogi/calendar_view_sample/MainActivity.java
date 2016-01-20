@@ -9,21 +9,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.widget.Toast;
 
-import com.tivogi.widget.calendar.CalendarView.OnDateClickLisetener;
+import com.tivogi.widget.calendar.CalendarView.OnDateClickListener;
 import com.tivogi.widget.calendar.DefaultCalendarView;
 
 public class MainActivity extends Activity {
 
-	private DefaultCalendarView mCalendarView;
-
 	private void bindViews() {
-		mCalendarView = (DefaultCalendarView) findViewById(R.id.a_m_calendar);
-		mCalendarView.setOnDateClickListener(new OnDateClickLisetener() {
+		DefaultCalendarView calendarView = (DefaultCalendarView) findViewById(R.id.a_m_calendar);
+		calendarView.setOnDateClickListener(new OnDateClickListener() {
 
 			@Override
-			public boolean onDateClick(DateTime date) {
+			public void onDateClick(DateTime date) {
 				onDateClickImpl(date);
-				return true;
 			}
 		});
 	}
