@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/month_header_background"
             android:orientation="horizontal"
-            android:padding="4dp" >
+            android:padding="4dp">
 
             <com.tivogi.widget.tinted.TintImageView
                 android:id="@+id/vc_button_previous_year"
@@ -35,7 +35,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight="1" >
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/vc_button_pick_date"
@@ -73,19 +73,19 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
             <ViewSwitcher
                 android:id="@+id/vc_switcher"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-            </ViewSwitcher>
+                android:layout_height="match_parent"/>
 
             <FrameLayout
                 android:id="@+id/vc_progress_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#AAFFFFFF" >
+                android:background="#AAFFFFFF"
+                android:visibility="gone">
 
                 <ProgressBar
                     android:id="@+id/vc_progress"
